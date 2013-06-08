@@ -9,14 +9,26 @@ namespace AutoCalcTest
 {
     class Program
     {
-       static AutomationElement getAEByName(AutomationElement parent, TreeScope scope, String name)
+        //Holds the button patterns for the calculator and accessed via character
+        static Dictionary<char, InvokePattern> patterns = new Dictionary<char,InvokePattern>();
+        
+        static AutomationElement getAEByName(AutomationElement parent, TreeScope scope, String name)
         {
             return parent.FindFirst(scope, new PropertyCondition(AutomationElement.NameProperty, name));
         }
+
+       static void InvokeElement(char c)
+       {
+           InvokePattern pattern = patterns[c];
+           pattern.Invoke();
+       }
         
         static void Main(string[] args)
         {
-            int[] input = { 4, 6 };
+            Console.WriteLine("Enter input:");
+            string input = Console.ReadLine();
+            Console.WriteLine("Enter expected results:");
+            string expected = Console.ReadLine();
             
             try
             {
@@ -94,10 +106,12 @@ namespace AutoCalcTest
                 InvokePattern[] iNumberButtons = new InvokePattern[10];
                 numberButtons[0] = aecalc.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "130"));
                 iNumberButtons[0] = (InvokePattern)numberButtons[0].GetCurrentPattern(InvokePattern.Pattern);
+                patterns.Add('0', iNumberButtons[0]);
                 for(int i=1; i<10; i++)
                 {
                     numberButtons[i]= getAEByName(aecalc, TreeScope.Descendants, i.ToString());
                     iNumberButtons[i] = (InvokePattern)numberButtons[i].GetCurrentPattern(InvokePattern.Pattern);
+                    patterns.Add(i.ToString()[0], iNumberButtons[i]);
                 }
 
                 //Setting up invoke patterns
@@ -109,21 +123,29 @@ namespace AutoCalcTest
                 InvokePattern iClearButton = (InvokePattern)clearButton.GetCurrentPattern(InvokePattern.Pattern);
                 InvokePattern iCloseButton = (InvokePattern)closeButton.GetCurrentPattern(InvokePattern.Pattern);
 
+                
+                patterns.Add('+', iAddButton);
+                patterns.Add('-', iSubButton);
+                patterns.Add('=', iEqualsButton);
+                patterns.Add('*', iMultiplyButton);
+                patterns.Add('/', iDivideButton);
+                patterns.Add('c', iClearButton);
+                patterns.Add('e', iCloseButton);
+
+
                 Console.WriteLine("Got button controls");
 
                 //Invokes buttons on the calc app
-                iNumberButtons[input[0]].Invoke();
-                iAddButton.Invoke();
-                iNumberButtons[input[1]].Invoke();
-                iEqualsButton.Invoke();
+                foreach( char c in input)
+                {
+                    InvokeElement(c);
+                }
                 
                 //Gets results from calc
-                string results =(string)resultsText.Current.Name;
-
-                
+                string results =(string)resultsText.Current.Name;               
 
                 //Test if results are correct
-                if (results == (input[0]+input[1]).ToString())
+                if (results == expected)
                 {
                     Console.WriteLine("Test: Pass");
                 }
@@ -131,7 +153,7 @@ namespace AutoCalcTest
                 {
                     Console.WriteLine("Test: FAIL");
                 }
-
+                
                 Console.WriteLine("Closing application in 5 seconds");
                 Thread.Sleep(5000);
                 iCloseButton.Invoke();
