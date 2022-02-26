@@ -1,7 +1,8 @@
-﻿using System;
+﻿using ExtensionMethods;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Automation;
 
@@ -10,26 +11,41 @@ namespace AutoCalcTest
     class Program
     {
         //Holds the button patterns for the calculator and accessed via character
-        static Dictionary<char, InvokePattern> patterns = new Dictionary<char,InvokePattern>();
-        
-        static AutomationElement getAEByName(AutomationElement parent, TreeScope scope, String name)
+        static Dictionary<char, InvokePattern> patterns = new Dictionary<char, InvokePattern>();
+        static Dictionary<char, AutomationPropertyPair> keyValuePairs = new Dictionary<char, AutomationPropertyPair>()
         {
-            return parent.FindFirst(scope, new PropertyCondition(AutomationElement.NameProperty, name));
+            {'1', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="One" } },
+            {'2', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Two" } },
+            {'3', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Three" }},
+            {'4', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Four" }},
+            {'5', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Five" }},
+            {'6', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Six" }},
+            {'7', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Seven" }},
+            {'8', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value= "Eight" }},
+            {'9', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Nine" }},
+            {'0', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Zero" }},
+            {'+', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Plus" }},
+            {'-', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Minus" }},
+            {'*', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Multiply by" }},
+            {'/', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Divide by" }},
+            {'=', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Equals" }},
+            {'c', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Clear" }},
+            {'e', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="Close" }}
+        };
+
+        static void InvokeElement(char c)
+        {
+            InvokePattern pattern = patterns[c];
+            pattern.Invoke();
         }
 
-       static void InvokeElement(char c)
-       {
-           InvokePattern pattern = patterns[c];
-           pattern.Invoke();
-       }
-        
         static void Main(string[] args)
         {
             Console.WriteLine("Enter input:");
             string input = Console.ReadLine();
             Console.WriteLine("Enter expected results:");
             string expected = Console.ReadLine();
-            
+
             try
             {
                 Console.WriteLine("Calculator Automation Test\n");
@@ -59,90 +75,45 @@ namespace AutoCalcTest
                 else
                     Console.WriteLine("Found Desktop\n");
 
-                AutomationElement aecalc = null;
+                AutomationElement aeCalc = null;
                 int numWaits = 0;
                 do
                 {
                     Console.WriteLine("Looking for calc main window. . . ");
-                    aecalc = aeDesktop.FindFirst(TreeScope.Children,
+                    aeCalc = aeDesktop.FindFirst(TreeScope.Children,
                         new PropertyCondition(AutomationElement.NameProperty, "Calculator"));
                     ++numWaits;
                     Thread.Sleep(200);
                 }
-                while (aecalc == null && numWaits < 50);
+                while (aeCalc == null && numWaits < 50);
 
-                if (aecalc == null)
+                if (aeCalc == null)
                     throw new Exception("Failed to find calc main window");
                 else
                     Console.WriteLine("Found calc main window");
 
-                
-                /*Get all buttons
-                AutomationElementCollection aeAllButtons = null;
-                aeAllButtons = aecalc.FindAll(TreeScope.Descendants,
-            new PropertyCondition(AutomationElement.ControlTypeProperty,
-              ControlType.Button));
-                if (aeAllButtons == null)
-                    throw new Exception("No buttons collection");
-                else
-                    Console.WriteLine("Got buttons collection");
-                 */
 
                 Console.WriteLine("Getting button controls");
-                
-                //Operator buttons
-                AutomationElement addButton =getAEByName(aecalc,TreeScope.Descendants,"Add");
-                AutomationElement subButton = getAEByName(aecalc, TreeScope.Descendants,"Subtract");
-                AutomationElement equalsButton = getAEByName(aecalc, TreeScope.Descendants, "Equals");
-                AutomationElement multiplyButton = getAEByName(aecalc, TreeScope.Descendants, "Multiply");
-                AutomationElement divideButton = getAEByName(aecalc, TreeScope.Descendants, "Divide");
-                AutomationElement clearButton = getAEByName(aecalc, TreeScope.Descendants, "Clear");
-                AutomationElement resultsText = aecalc.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "150"));
 
-                AutomationElement closeButton = getAEByName(aecalc, TreeScope.Descendants, "Close");
-
-                //Get all number buttons
-                AutomationElement[] numberButtons = new AutomationElement[10];
-                InvokePattern[] iNumberButtons = new InvokePattern[10];
-                numberButtons[0] = aecalc.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, "130"));
-                iNumberButtons[0] = (InvokePattern)numberButtons[0].GetCurrentPattern(InvokePattern.Pattern);
-                patterns.Add('0', iNumberButtons[0]);
-                for(int i=1; i<10; i++)
+                foreach (var button in keyValuePairs)
                 {
-                    numberButtons[i]= getAEByName(aecalc, TreeScope.Descendants, i.ToString());
-                    iNumberButtons[i] = (InvokePattern)numberButtons[i].GetCurrentPattern(InvokePattern.Pattern);
-                    patterns.Add(i.ToString()[0], iNumberButtons[i]);
+                    var aeButton = aeCalc.FindByProperty(TreeScope.Descendants, button.Value.prop, button.Value.value);
+                    patterns[button.Key] = (InvokePattern)aeButton.GetCurrentPattern(InvokePattern.Pattern);
                 }
 
-                //Setting up invoke patterns
-                InvokePattern iAddButton = (InvokePattern)addButton.GetCurrentPattern(InvokePattern.Pattern);
-                InvokePattern iSubButton = (InvokePattern)subButton.GetCurrentPattern(InvokePattern.Pattern);
-                InvokePattern iEqualsButton = (InvokePattern)equalsButton.GetCurrentPattern(InvokePattern.Pattern);
-                InvokePattern iMultiplyButton = (InvokePattern)multiplyButton.GetCurrentPattern(InvokePattern.Pattern);
-                InvokePattern iDivideButton = (InvokePattern)divideButton.GetCurrentPattern(InvokePattern.Pattern);
-                InvokePattern iClearButton = (InvokePattern)clearButton.GetCurrentPattern(InvokePattern.Pattern);
-                InvokePattern iCloseButton = (InvokePattern)closeButton.GetCurrentPattern(InvokePattern.Pattern);
-
-                
-                patterns.Add('+', iAddButton);
-                patterns.Add('-', iSubButton);
-                patterns.Add('=', iEqualsButton);
-                patterns.Add('*', iMultiplyButton);
-                patterns.Add('/', iDivideButton);
-                patterns.Add('c', iClearButton);
-                patterns.Add('e', iCloseButton);
+                AutomationElement resultsText = aeCalc.FindByProperty(TreeScope.Descendants, AutomationElement.AutomationIdProperty, "CalculatorResults");
 
 
                 Console.WriteLine("Got button controls");
 
                 //Invokes buttons on the calc app
-                foreach( char c in input)
+                foreach (char c in input)
                 {
                     InvokeElement(c);
                 }
-                
+
                 //Gets results from calc
-                string results =(string)resultsText.Current.Name;               
+                string results = (string)Regex.Match(resultsText.Current.Name, @"\d+").Value; 
 
                 //Test if results are correct
                 if (results == expected)
@@ -153,10 +124,10 @@ namespace AutoCalcTest
                 {
                     Console.WriteLine("Test: FAIL");
                 }
-                
+
                 Console.WriteLine("Closing application in 5 seconds");
                 Thread.Sleep(5000);
-                iCloseButton.Invoke();
+                patterns['e'].Invoke();
 
                 Console.WriteLine("End automation\n");
                 Console.ReadLine();
@@ -166,8 +137,30 @@ namespace AutoCalcTest
                 Console.WriteLine("Fatal: " + ex.Message);
                 Console.ReadLine();
             }
-
         }
 
+    }
+
+    public struct AutomationPropertyPair
+    {
+        public AutomationProperty prop;
+        public string value;
+    }
+}
+
+
+namespace ExtensionMethods
+{
+    public static class AutomationElementExtensions
+    {
+        public static AutomationElement FindByName(this AutomationElement parent, TreeScope scope, String name)
+        {
+            return FindByProperty(parent, scope, AutomationElement.NameProperty, name);
+        }
+
+        public static AutomationElement FindByProperty(this AutomationElement parent, TreeScope scope, AutomationProperty prop, String name)
+        {
+            return parent.FindFirst(scope, new PropertyCondition(prop, name));
+        }
     }
 }
