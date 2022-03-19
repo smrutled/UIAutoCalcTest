@@ -64,12 +64,13 @@ namespace AutoCalcTest
         public bool TestCalc(string input, string expected)
         {
             bool bPass = false;
+            Process p = null;
             try
             {
                 Console.WriteLine("Calculator Automation Test\n");
                 Console.WriteLine("Launching Windows Calc application");
-                Process p = null;
-                p = Process.Start("C:\\Projects\\calc.exe");
+               
+                p = Process.Start("calc.exe");
 
                 int ct = 0;
                 do
@@ -134,8 +135,8 @@ namespace AutoCalcTest
                     {
                         Console.WriteLine("Found control " + aeObject.Current.Name + " " + aeObject.Current.ClassName);
                         aeObjects[keypair.Key]= aeObject;
-                        if (aeObject.Current.ClassName == "Button")
-                            patterns[keypair.Key] = (InvokePattern)aeObject.GetCurrentPattern(InvokePattern.Pattern);
+                        if (aeObject.TryGetCurrentPattern(InvokePattern.Pattern, out object pattern))
+                            patterns[keypair.Key] = (InvokePattern)pattern;
                     }
                     else
                     {
@@ -184,6 +185,8 @@ namespace AutoCalcTest
             {
                 Console.WriteLine("Fatal: " + ex.Message);
             }
+            if(p!=null)
+                p.Close();
             return bPass;
         }
     }
