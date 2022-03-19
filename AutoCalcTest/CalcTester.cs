@@ -89,11 +89,26 @@ namespace AutoCalcTest
 
 
                 Console.WriteLine("Getting button controls");
-
+                bool bAllButtons = true;
                 foreach (var button in keyValuePairs)
                 {
+                    Console.WriteLine("Getting button " + button.Value.value);
                     var aeButton = aeCalc.FindByProperty(TreeScope.Descendants, button.Value.prop, button.Value.value);
-                    patterns[button.Key] = (InvokePattern)aeButton.GetCurrentPattern(InvokePattern.Pattern);
+                    if (aeButton != null)
+                    {
+                        patterns[button.Key] = (InvokePattern)aeButton.GetCurrentPattern(InvokePattern.Pattern);
+                        Console.WriteLine("Found button " + button.Value.value);
+                    }
+                    else
+                    {
+                        bAllButtons = false;
+                        Console.WriteLine("Button " + button.Value.value + " not found!!");
+                    }
+                }
+                if(!bAllButtons)
+                {
+                    Console.WriteLine("Error: Missing buttons");
+                    return false;
                 }
 
                 AutomationElement resultsText = aeCalc.FindByProperty(TreeScope.Descendants, AutomationElement.AutomationIdProperty, "CalculatorResults");
