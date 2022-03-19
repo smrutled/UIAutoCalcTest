@@ -12,7 +12,29 @@ namespace AutoCalcTest
     {
         //Holds the button patterns for the calculator and accessed via character
         static Dictionary<char, InvokePattern> patterns = new Dictionary<char, InvokePattern>();
-        static Dictionary<char, AutomationPropertyPair> keyValuePairs = new Dictionary<char, AutomationPropertyPair>()
+        static Dictionary<char, AutomationElement> aeObjects = new Dictionary<char, AutomationElement>();
+        static Dictionary<char, AutomationPropertyPair> oldCalcKeyValuePairs = new Dictionary<char, AutomationPropertyPair>()
+        {
+            {'1', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="1" } },
+            {'2', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="2" } },
+            {'3', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="3" }},
+            {'4', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="4" }},
+            {'5', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="5" }},
+            {'6', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="6" }},
+            {'7', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="7" }},
+            {'8', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="8" }},
+            {'9', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="9" }},
+            {'0', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="130" }},
+            {'+', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Add" }},
+            {'-', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Subtract" }},
+            {'*', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Multiply" }},
+            {'/', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Divide" }},
+            {'=', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Equals" }},
+            {'c', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Clear" }},
+            {'e', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="Close" }},
+            {'R', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="150" }}
+        };
+        static Dictionary<char, AutomationPropertyPair> UWPCalcKeyValuePairs = new Dictionary<char, AutomationPropertyPair>()
         {
             {'1', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="One" } },
             {'2', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Two" } },
@@ -30,7 +52,8 @@ namespace AutoCalcTest
             {'/', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Divide by" }},
             {'=', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Equals" }},
             {'c', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Clear" }},
-            {'e', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="Close" }}
+            {'e', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="Close" }},
+            {'R', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="CalculatorResults" }}
         };
 
         static void InvokeElement(char c)
@@ -46,7 +69,7 @@ namespace AutoCalcTest
                 Console.WriteLine("Calculator Automation Test\n");
                 Console.WriteLine("Launching Windows Calc application");
                 Process p = null;
-                p = Process.Start("calc.exe");
+                p = Process.Start("C:\\Projects\\calc.exe");
 
                 int ct = 0;
                 do
@@ -88,21 +111,36 @@ namespace AutoCalcTest
                     Console.WriteLine("Found calc main window");
 
 
-                Console.WriteLine("Getting button controls");
-                bool bAllButtons = true;
-                foreach (var button in keyValuePairs)
+
+                Dictionary<char, AutomationPropertyPair> keyValuePairs;
+                //Determine Calc version
+                if (aeCalc.Current.ClassName == "ApplicationFrameWindow")
+                    keyValuePairs = UWPCalcKeyValuePairs;
+                else if (aeCalc.Current.ClassName == "CalcFrame")
+                    keyValuePairs = oldCalcKeyValuePairs;
+                else
                 {
-                    Console.WriteLine("Getting button " + button.Value.value);
-                    var aeButton = aeCalc.FindByProperty(TreeScope.Descendants, button.Value.prop, button.Value.value);
-                    if (aeButton != null)
+                    Console.WriteLine("Error: Unknown version of calc");
+                    return false;
+                }
+
+                Console.WriteLine("Getting controls");
+                bool bAllButtons = true;
+                foreach (var keypair in keyValuePairs)
+                {
+                    Console.WriteLine("Getting control " + keypair.Value.value);
+                    var aeObject = aeCalc.FindByProperty(TreeScope.Descendants, keypair.Value.prop, keypair.Value.value);
+                    if (aeObject != null)
                     {
-                        patterns[button.Key] = (InvokePattern)aeButton.GetCurrentPattern(InvokePattern.Pattern);
-                        Console.WriteLine("Found button " + button.Value.value);
+                        Console.WriteLine("Found control " + aeObject.Current.Name + " " + aeObject.Current.ClassName);
+                        aeObjects[keypair.Key]= aeObject;
+                        if (aeObject.Current.ClassName == "Button")
+                            patterns[keypair.Key] = (InvokePattern)aeObject.GetCurrentPattern(InvokePattern.Pattern);
                     }
                     else
                     {
                         bAllButtons = false;
-                        Console.WriteLine("Button " + button.Value.value + " not found!!");
+                        Console.WriteLine("Button " + keypair.Value.value + " not found!!");
                     }
                 }
                 if(!bAllButtons)
@@ -111,7 +149,7 @@ namespace AutoCalcTest
                     return false;
                 }
 
-                AutomationElement resultsText = aeCalc.FindByProperty(TreeScope.Descendants, AutomationElement.AutomationIdProperty, "CalculatorResults");
+                AutomationElement resultsText = aeObjects['R'];
 
 
                 Console.WriteLine("Got button controls");
