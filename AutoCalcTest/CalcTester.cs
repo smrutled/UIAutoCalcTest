@@ -15,7 +15,7 @@ namespace AutoCalcTest
         static Dictionary<char, AutomationElement> aeObjects = new Dictionary<char, AutomationElement>();
         static Dictionary<char, AutomationPropertyPair> oldCalcKeyValuePairs = new Dictionary<char, AutomationPropertyPair>()
         {
-            {'1', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="1" } },
+            {'1', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="131" } },
             {'2', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="2" } },
             {'3', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="3" }},
             {'4', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="4" }},
