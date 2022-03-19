@@ -13,47 +13,47 @@ namespace AutoCalcTest
         //Holds the button patterns for the calculator and accessed via character
         static Dictionary<char, InvokePattern> patterns = new Dictionary<char, InvokePattern>();
         static Dictionary<char, AutomationElement> aeObjects = new Dictionary<char, AutomationElement>();
-        static Dictionary<char, AutomationPropertyPair> oldCalcKeyValuePairs = new Dictionary<char, AutomationPropertyPair>()
+        static Dictionary<char, Condition> oldCalcKeyValuePairs = new Dictionary<char, Condition>()
         {
-            {'1', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="131" } },
-            {'2', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="2" } },
-            {'3', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="3" }},
-            {'4', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="4" }},
-            {'5', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="5" }},
-            {'6', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="6" }},
-            {'7', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="7" }},
-            {'8', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="8" }},
-            {'9', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="9" }},
-            {'0', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="130" }},
-            {'+', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Add" }},
-            {'-', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Subtract" }},
-            {'*', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Multiply" }},
-            {'/', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Divide" }},
-            {'=', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Equals" }},
-            {'c', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Clear" }},
-            {'e', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="Close" }},
-            {'R', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="150" }}
+            {'1', new PropertyCondition(AutomationElement.AutomationIdProperty,"131") },
+            {'2', new PropertyCondition(AutomationElement.NameProperty,"2") },
+            {'3', new PropertyCondition(AutomationElement.NameProperty, "3" )},
+            {'4', new PropertyCondition(AutomationElement.NameProperty, "4" )},
+            {'5', new PropertyCondition(AutomationElement.NameProperty, "5" )},
+            {'6', new PropertyCondition(AutomationElement.NameProperty, "6" )},
+            {'7', new PropertyCondition(AutomationElement.NameProperty, "7" )},
+            {'8', new PropertyCondition(AutomationElement.NameProperty, "8" )},
+            {'9', new PropertyCondition(AutomationElement.NameProperty, "9" )},
+            {'0', new PropertyCondition(AutomationElement.AutomationIdProperty, "130" )},
+            {'+', new PropertyCondition(AutomationElement.NameProperty, "Add" )},
+            {'-', new PropertyCondition(AutomationElement.NameProperty, "Subtract" )},
+            {'*', new PropertyCondition(AutomationElement.NameProperty, "Multiply" )},
+            {'/', new PropertyCondition(AutomationElement.NameProperty, "Divide" )},
+            {'=', new PropertyCondition(AutomationElement.NameProperty, "Equals" )},
+            {'c', new PropertyCondition(AutomationElement.NameProperty, "Clear" )},
+            {'e', new PropertyCondition(AutomationElement.AutomationIdProperty, "Close" )},
+            {'R', new PropertyCondition(AutomationElement.AutomationIdProperty, "150" )}
         };
-        static Dictionary<char, AutomationPropertyPair> UWPCalcKeyValuePairs = new Dictionary<char, AutomationPropertyPair>()
+        static Dictionary<char, Condition> UWPCalcKeyValuePairs = new Dictionary<char, Condition>()
         {
-            {'1', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="One" } },
-            {'2', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Two" } },
-            {'3', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Three" }},
-            {'4', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Four" }},
-            {'5', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Five" }},
-            {'6', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Six" }},
-            {'7', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Seven" }},
-            {'8', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value= "Eight" }},
-            {'9', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Nine" }},
-            {'0', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Zero" }},
-            {'+', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Plus" }},
-            {'-', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Minus" }},
-            {'*', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Multiply by" }},
-            {'/', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Divide by" }},
-            {'=', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Equals" }},
-            {'c', new AutomationPropertyPair{ prop=AutomationElement.NameProperty, value="Clear" }},
-            {'e', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="Close" }},
-            {'R', new AutomationPropertyPair{ prop=AutomationElement.AutomationIdProperty, value="CalculatorResults" }}
+            {'1', new PropertyCondition(AutomationElement.NameProperty, "One" ) },
+            {'2', new PropertyCondition(AutomationElement.NameProperty, "Two" )},
+            { '3', new PropertyCondition(AutomationElement.NameProperty, "Three")},
+            { '4', new PropertyCondition(AutomationElement.NameProperty, "Four")},
+            { '5', new PropertyCondition(AutomationElement.NameProperty, "Five")},
+            { '6', new PropertyCondition(AutomationElement.NameProperty, "Six")},
+            { '7', new PropertyCondition(AutomationElement.NameProperty, "Seven")},
+            { '8', new PropertyCondition(AutomationElement.NameProperty, "Eight")},
+            { '9', new PropertyCondition(AutomationElement.NameProperty, "Nine")},
+            { '0', new PropertyCondition(AutomationElement.NameProperty, "Zero")},
+            { '+', new PropertyCondition(AutomationElement.NameProperty, "Plus")},
+            { '-', new PropertyCondition(AutomationElement.NameProperty, "Minus")},
+            { '*', new PropertyCondition(AutomationElement.NameProperty, "Multiply by")},
+            { '/', new PropertyCondition(AutomationElement.NameProperty, "Divide by")},
+            { '=', new PropertyCondition(AutomationElement.NameProperty, "Equals")},
+            { 'c', new PropertyCondition(AutomationElement.NameProperty, "Clear")},
+            { 'e', new PropertyCondition(AutomationElement.AutomationIdProperty, "Close")},
+            { 'R', new PropertyCondition(AutomationElement.AutomationIdProperty, "CalculatorResults")}
         };
 
         static void InvokeElement(char c)
@@ -113,7 +113,7 @@ namespace AutoCalcTest
 
 
 
-                Dictionary<char, AutomationPropertyPair> keyValuePairs;
+                Dictionary<char, Condition> keyValuePairs;
                 //Determine Calc version
                 if (aeCalc.Current.ClassName == "ApplicationFrameWindow")
                     keyValuePairs = UWPCalcKeyValuePairs;
@@ -129,8 +129,8 @@ namespace AutoCalcTest
                 bool bAllButtons = true;
                 foreach (var keypair in keyValuePairs)
                 {
-                    Console.WriteLine("Getting control " + keypair.Value.value);
-                    var aeObject = aeCalc.FindByProperty(TreeScope.Descendants, keypair.Value.prop, keypair.Value.value);
+                    Console.WriteLine("Getting control " + keypair.Key);
+                    var aeObject = aeCalc.FindFirst(TreeScope.Descendants, keypair.Value);
                     if (aeObject != null)
                     {
                         Console.WriteLine("Found control " + aeObject.Current.Name + " " + aeObject.Current.ClassName);
@@ -141,7 +141,7 @@ namespace AutoCalcTest
                     else
                     {
                         bAllButtons = false;
-                        Console.WriteLine("Button " + keypair.Value.value + " not found!!");
+                        Console.WriteLine("Control " + keypair.Key + " not found!!");
                     }
                 }
                 if(!bAllButtons)
@@ -189,12 +189,6 @@ namespace AutoCalcTest
                 p.Close();
             return bPass;
         }
-    }
-
-    public struct AutomationPropertyPair
-    {
-        public AutomationProperty prop;
-        public string value;
     }
 }
 
