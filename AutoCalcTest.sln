@@ -1,7 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32314.265
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoCalcTest", "AutoCalcTest\AutoCalcTest.csproj", "{1E1D1D72-C750-40ED-8E05-06BEB2AD7EC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcTesterTests", "CalcTesterTests\CalcTesterTests.csproj", "{2CFB0156-3459-45D7-8AE4-73EF46B47378}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,8 +17,15 @@ Global
 		{1E1D1D72-C750-40ED-8E05-06BEB2AD7EC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E1D1D72-C750-40ED-8E05-06BEB2AD7EC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E1D1D72-C750-40ED-8E05-06BEB2AD7EC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CFB0156-3459-45D7-8AE4-73EF46B47378}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CFB0156-3459-45D7-8AE4-73EF46B47378}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CFB0156-3459-45D7-8AE4-73EF46B47378}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CFB0156-3459-45D7-8AE4-73EF46B47378}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3524DCF1-4F3C-4060-8D5C-F0C1D7B9B77A}
 	EndGlobalSection
 EndGlobal
