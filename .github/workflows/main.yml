@@ -27,5 +27,13 @@ jobs:
     - name: Build
       run: msbuild /t:Build /p:Configuration=Debug
 
+    - name: Find Test DLL
+      id: find-test-dll
+      shell: pwsh
+      run: |
+        $dllPath = Get-ChildItem -Path CalcTesterTests\bin\Debug -Filter CalcTesterTests.dll -Recurse | Select-Object -First 1 -ExpandProperty FullName
+        echo "Found DLL at: $dllPath"
+        echo "TEST_DLL_PATH=$dllPath" >> $env:GITHUB_ENV
+
     - name: Tests
-      run: vstest.console.exe CalcTesterTests\bin\Debug\CalcTesterTests.dll
+      run: vstest.console.exe ${{ env.TEST_DLL_PATH }}
