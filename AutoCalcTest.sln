@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32314.265
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoCalcTest", "AutoCalcTest\AutoCalcTest.csproj", "{1E1D1D72-C750-40ED-8E05-06BEB2AD7EC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoCalcTest", "AutoCalcTest\AutoCalcTest.csproj", "{1E1D1D72-C750-40ED-8E05-06BEB2AD7EC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcTesterTests", "CalcTesterTests\CalcTesterTests.csproj", "{2CFB0156-3459-45D7-8AE4-73EF46B47378}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CalcTesterTests", "CalcTesterTests\CalcTesterTests.csproj", "{2CFB0156-3459-45D7-8AE4-73EF46B47378}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
